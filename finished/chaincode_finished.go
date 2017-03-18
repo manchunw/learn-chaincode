@@ -760,7 +760,7 @@ var allHaStr = "AllHashAtts"
 // 	UserId string `json:user_id`
 // 	CrtDt string `json:crt_dt`
 
-func addObject(stub shim.ChaincodeStubInterface, objId string, objType string, content string, userId string) (obj Obj, e Error) {
+func (t *SimpleChaincode) addObject(stub shim.ChaincodeStubInterface, objId string, objType string, content string, userId string) (obj Obj, e Error) {
 	var err error
 
 	//get the email index
@@ -786,7 +786,7 @@ func addObject(stub shim.ChaincodeStubInterface, objId string, objType string, c
 	return nil, nil
 }
 
-func addHashAttachment(stub shim.ChaincodeStubInterface, haId string, userId string, objId string) (obj Obj, e Error) {
+func (t *SimpleChaincode) addHashAttachment(stub shim.ChaincodeStubInterface, haId string, userId string, objId string) (obj Obj, e Error) {
 	var err error
 
 	//get the email index
