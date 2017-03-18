@@ -761,7 +761,7 @@ var allHaStr = "AllHashAtts"
 // 	CrtDt string `json:crt_dt`
 
 func (t *SimpleChaincode) addObject(stub shim.ChaincodeStubInterface, objId string, objType string, content string, userId string) ([]byte, error) {
-	var err errora
+	var err errord
 
 	//get the email index
 	emailAsBytes, err := stub.GetState(objIndexStr)
