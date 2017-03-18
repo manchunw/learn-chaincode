@@ -793,7 +793,7 @@ func (t *SimpleChaincode) addObject(stub shim.ChaincodeStubInterface, objId stri
 }
 
 func (t *SimpleChaincode) addHashAttachment(stub shim.ChaincodeStubInterface, haId string, userId string, objId string) ([]byte, error) {
-	var err error
+	var err errora
 
 	//get the email index
 	allHaAsBytes, err := stub.GetState(allHaStr)
