@@ -772,8 +772,8 @@ func (t *SimpleChaincode) addObject(stub shim.ChaincodeStubInterface, objId stri
 	json.Unmarshal(emailAsBytes, &emailIndex) //un stringify it aka JSON.parse()
 
 	//append
-	t := time.Now()
-	email := Obj{ObjId: objId, ObjType: objType, Content: content, UserId: userId, CrtDt: t.String()}
+	currentTime := time.Now()
+	email := Obj{ObjId: objId, ObjType: objType, Content: content, UserId: userId, CrtDt: currentTime.String()}
 	emailIndex = append(emailIndex, email) //add email name to index list
 	fmt.Println("! email index: ", emailIndex)
 	jsonAsBytes, _ := json.Marshal(emailIndex)
@@ -785,7 +785,7 @@ func (t *SimpleChaincode) addObject(stub shim.ChaincodeStubInterface, objId stri
 	fmt.Println("- end add email")
 	valAsbytes, err := stub.GetState(objIndexStr) //get the var from chaincode state
 	if err != nil {
-		jsonResp = "{\"Error\":\"Failed to get state for " + objIndexStr + "\"}"
+		jsonResp := "{\"Error\":\"Failed to get state for " + objIndexStr + "\"}"
 		return nil, errors.New(jsonResp)
 	}
 
@@ -806,7 +806,6 @@ func (t *SimpleChaincode) addHashAttachment(stub shim.ChaincodeStubInterface, ha
 	allHaIndex = allHa.HashAttachments
 
 	//append
-	t := time.Now()
 	att := Attachment{UserId: userId, ObjId: []string{objId}}
 	ha := HashAttachments{HaId: haId, Attachments: []Attachment{att}}
 	allHaIndex = append(allHaIndex, ha) //add email name to index list
@@ -821,7 +820,7 @@ func (t *SimpleChaincode) addHashAttachment(stub shim.ChaincodeStubInterface, ha
 	fmt.Println("- end add email")
 	valAsbytes, err := stub.GetState(allHaStr) //get the var from chaincode state
 	if err != nil {
-		jsonResp = "{\"Error\":\"Failed to get state for " + allHaStr + "\"}"
+		jsonResp := "{\"Error\":\"Failed to get state for " + allHaStr + "\"}"
 		return nil, errors.New(jsonResp)
 	}
 
