@@ -760,7 +760,7 @@ var allHaStr = "AllHashAtts"
 // 	UserId string `json:user_id`
 // 	CrtDt string `json:crt_dt`
 
-func (t *SimpleChaincode) addObject(stub shim.ChaincodeStubInterface, objId string, objType string, content string, userId string) (obj Obj, e Error) {
+func (t *SimpleChaincode) addObject(stub shim.ChaincodeStubInterface, objId string, objType string, content string, userId string) ([]byte, Error) {
 	var err error
 
 	//get the email index
@@ -783,10 +783,16 @@ func (t *SimpleChaincode) addObject(stub shim.ChaincodeStubInterface, objId stri
 	}
 
 	fmt.Println("- end add email")
-	return nil, nil
+	valAsbytes, err := stub.GetState(objIndexStr) //get the var from chaincode state
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + objIndexStr + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+
+	return valAsbytes, nil //send it onward
 }
 
-func (t *SimpleChaincode) addHashAttachment(stub shim.ChaincodeStubInterface, haId string, userId string, objId string) (obj Obj, e Error) {
+func (t *SimpleChaincode) addHashAttachment(stub shim.ChaincodeStubInterface, haId string, userId string, objId string) ([]byte, Error) {
 	var err error
 
 	//get the email index
@@ -813,5 +819,11 @@ func (t *SimpleChaincode) addHashAttachment(stub shim.ChaincodeStubInterface, ha
 	}
 
 	fmt.Println("- end add email")
-	return nil, nil
+	valAsbytes, err := stub.GetState(allHaStr) //get the var from chaincode state
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + allHaStr + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+
+	return valAsbytes, nil //send it onward
 }
