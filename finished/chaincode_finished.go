@@ -170,7 +170,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 	var allObj AllObj
 	jsonAsBytes, _ = json.Marshal(allObj) //clear the object struct
-	err = stub.PutState(allObjStr, jsonAsBytes)
+	err = stub.PutState(objIndexStr, jsonAsBytes)
 	if err != nil {
 		return nil, err
 	}
