@@ -116,6 +116,11 @@ type AllLogs struct {
 	Logs []Log `json:logs`
 }
 
+var objStr = "Obj"
+var objIndexStr = "AllObj"
+var haStr = "HashAtts"
+var allHaStr = "AllHashAtts"
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -159,6 +164,20 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	var trades AllTrades
 	jsonAsBytes, _ = json.Marshal(trades) //clear the open trade struct
 	err = stub.PutState(openTradesStr, jsonAsBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	var allObj AllObj
+	jsonAsBytes, _ = json.Marshal(allObj) //clear the object struct
+	err = stub.PutState(allObjStr, jsonAsBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	var allHa AllHashAttachments
+	jsonAsBytes, _ = json.Marshal(allHa) //clear the hash attachment struct
+	err = stub.PutState(allHaStr, jsonAsBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -741,11 +760,6 @@ func RandStringBytes(n int) string {
 	}
 	return string(b)
 }
-
-var objStr = "Obj"
-var objIndexStr = "AllObjs"
-var haStr = "HashAtts"
-var allHaStr = "AllHashAtts"
 
 // var addEmailStr = "_addEmail"
 // var addLogStr = "_addLog"
