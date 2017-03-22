@@ -226,6 +226,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.remove_trade(stub, args)
 	} else if function == "add_email" {
 		return t.addObject(stub, args[0], args[1], args[2], args[3])
+	} else if function == "add_attachment" {
+		return t.addObject(stub, args[0], args[1], args[2], args[3])
 	} else if function == "verify_object" {
 		return t.verifyObject(stub, args[0])
 	}
