@@ -844,7 +844,7 @@ func (t *SimpleChaincode) addHashAttachment(stub shim.ChaincodeStubInterface, ha
 }
 
 
-func (t *SimpleChaincode) verifyObject(stub shim.ChaincodeStubInterface, objId string) (string, error) {
+func (t *SimpleChaincode) verifyObject(stub shim.ChaincodeStubInterface, objId string) ([]byte, error) {
 	var err error
 
 	//get the email index
@@ -853,7 +853,7 @@ func (t *SimpleChaincode) verifyObject(stub shim.ChaincodeStubInterface, objId s
 		return nil, errors.New("Failed to get email index")
 	}
 	var emailIndex []Obj
-	var obj = nil
+	obj := nil
 	json.Unmarshal(emailAsBytes, &emailIndex) //un stringify it aka JSON.parse()
 	for i := range emailIndex {
 		if objId == emailIndex[i].ObjId {
