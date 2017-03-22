@@ -226,6 +226,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.remove_trade(stub, args)
 	} else if function == "add_email" {
 		return t.addObject(stub, args[0], args[1], args[2], args[3])
+	} else if function == "verify_object" {
+		return t.verifyObject(stub, args[0])
 	}
 	fmt.Println("invoke did not find func: " + function) //error
 
@@ -840,3 +842,29 @@ func (t *SimpleChaincode) addHashAttachment(stub shim.ChaincodeStubInterface, ha
 
 	return valAsbytes, nil //send it onward
 }
+
+
+func (t *SimpleChaincode) verifyObject(stub shim.ChaincodeStubInterface, objId string) (string, error) {
+	var err error
+
+	//get the email index
+	emailAsBytes, err := stub.GetState(objIndexStr)
+	if err != nil {
+		return nil, errors.New("Failed to get email index")
+	}
+	var emailIndex []Obj
+	var obj = nil
+	json.Unmarshal(emailAsBytes, &emailIndex) //un stringify it aka JSON.parse()
+	for i := range emailIndex {
+		if objId == emailIndex[i].ObjId {
+			obj = emailIndex[i]
+			break
+		}
+	}
+	if obj == nil {
+		return nil, errors.New("No email matches")
+	}
+	jsonAsBytes, _ := json.Marshal(obj)
+	return jsonAsBytes, nil
+}
+
