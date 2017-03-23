@@ -232,7 +232,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	} else if function == "verify_object" {
 		return t.verifyObject(stub, args[0])
 	} else if function == "getEmailsListFromAttachment" {
-		return t.getEmailsListFromAttachment(args)
+		return t.getEmailsListFromAttachment(stub, args[0])
 	}
 	fmt.Println("invoke did not find func: " + function) //error
 
@@ -825,7 +825,7 @@ func (t *SimpleChaincode) addAttachment(stub shim.ChaincodeStubInterface, fileHa
 	json.Unmarshal(emailAsBytes, &emailIndex) //un stringify it aka JSON.parse()
 
 	//append
-	currentTime := time.Now()
+	//currentTime := time.Now()
 	//email := Obj{ObjId: objId, ObjType: objType, Content: content, UserId: userId, CrtDt: currentTime.String()}
 	email := emailContent;
 	emailIndex = append(emailIndex, email) //add email name to index list
