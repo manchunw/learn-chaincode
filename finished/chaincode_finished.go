@@ -225,7 +225,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	} else if function == "remove_trade" { //cancel an open trade order
 		return t.remove_trade(stub, args)
 	} else if function == "add_email" {
-		return t.addObject(stub, args[0], args[1], args[2], args[3])
+		//return t.addObject(stub, args[0], args[1], args[2], args[3])
+		return t.addEmail(stub, args[0], args[1])
 	} else if function == "add_attachment" {
 		//return t.addObject(stub, args[0], args[1], args[2], args[3])
 		return t.addAttachment(stub, args[0], args[1], args[2]);
@@ -817,19 +818,52 @@ func (t *SimpleChaincode) addObject(stub shim.ChaincodeStubInterface, objId stri
 	return valAsbytes, nil //send it onward
 }
 
+func (t *SimpleChaincode) addEmail(stub shim.ChaincodeStubInterface, userid string, data string) ([]byte, error) {
+	var err error
+
+	//get the email index
+	emailAsBytes, err := stub.GetState(userid)
+	if err != nil {
+		return nil, errors.New("Failed to get email index")
+	}
+	var emailIndex []string
+	json.Unmarshal(emailAsBytes, &emailIndex) //un stringify it aka JSON.parse()
+
+	//append
+	//currentTime := time.Now()
+	email := data
+	emailIndex = append(emailIndex, email) //add email name to index list
+	fmt.Println("! email index: ", emailIndex)
+	jsonAsBytes, _ := json.Marshal(emailIndex)
+	err = stub.PutState(userid, jsonAsBytes) //store name of email
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("- end add email")
+	valAsbytes, err := stub.GetState(userid) //get the var from chaincode state
+	if err != nil {
+		jsonResp := "{\"Error\":\"Failed to get state for " + objIndexStr + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+
+	return valAsbytes, nil //send it onward
+}
+
 func (t *SimpleChaincode) addAttachment(stub shim.ChaincodeStubInterface, fileHash string, userid string, emailContent string) ([]byte, error) {
 	var err error
 
 	//get the email index
-	emailAsBytes, err := stub.GetState(fileHash+userid)
-	userEmailAsBytes, err2 := stub.GetState(userid)
-	if err != nil && err2 != nil {
+	
+	emailAsBytes, err := stub.GetState(fileHash)
+	//userEmailAsBytes, err2 := stub.GetState(userid)
+	if err != nil {
 		return nil, errors.New("Failed to get email index")
 	}
 	var emailIndex []string
-	var useremailIndex []string
+	//var useremailIndex []string
 	json.Unmarshal(emailAsBytes, &emailIndex) //un stringify it aka JSON.parse()
-	json.Unmarshal(userEmailAsBytes, &useremailIndex) //un stringify it aka JSON.parse()
+	//json.Unmarshal(userEmailAsBytes, &useremailIndex) //un stringify it aka JSON.parse()
 	//append
 	//currentTime := time.Now()
 	//email := Obj{ObjId: objId, ObjType: objType, Content: content, UserId: userId, CrtDt: currentTime.String()}
@@ -843,12 +877,12 @@ func (t *SimpleChaincode) addAttachment(stub shim.ChaincodeStubInterface, fileHa
 		return nil, err
 	}
 
-	useremailIndex = append(useremailIndex, email)
-	userjsonAsBytes, _ := json.Marshal(useremailIndex)
-	err = stub.PutState(userid, userjsonAsBytes) //store userid/mail pair
-	if err != nil {
-		return nil, err
-	}
+	//useremailIndex = append(useremailIndex, email)
+	//userjsonAsBytes, _ := json.Marshal(useremailIndex)
+	//err = stub.PutState(userid, userjsonAsBytes) //store userid/mail pair
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	fmt.Println("- end add email")
 	valAsbytes, err := stub.GetState(fileHash) //get the var from chaincode state
