@@ -227,9 +227,12 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	} else if function == "add_email" {
 		return t.addObject(stub, args[0], args[1], args[2], args[3])
 	} else if function == "add_attachment" {
-		return t.addObject(stub, args[0], args[1], args[2], args[3])
+		//return t.addObject(stub, args[0], args[1], args[2], args[3])
+		return t.addAttachment(stub, args[0], args[1]);
 	} else if function == "verify_object" {
 		return t.verifyObject(stub, args[0])
+	} else if function == "getEmailsListFromAttachment" {
+		return t.getEmailsListFromAttachment(args)
 	}
 	fmt.Println("invoke did not find func: " + function) //error
 
@@ -810,6 +813,39 @@ func (t *SimpleChaincode) addObject(stub shim.ChaincodeStubInterface, objId stri
 	return valAsbytes, nil //send it onward
 }
 
+func (t *SimpleChaincode) addAttachment(stub shim.ChaincodeStubInterface, fileHash string, emailContent string) ([]byte, error) {
+	var err error
+
+	//get the email index
+	emailAsBytes, err := stub.GetState(fileHash)
+	if err != nil {
+		return nil, errors.New("Failed to get email index")
+	}
+	var emailIndex []string
+	json.Unmarshal(emailAsBytes, &emailIndex) //un stringify it aka JSON.parse()
+
+	//append
+	currentTime := time.Now()
+	//email := Obj{ObjId: objId, ObjType: objType, Content: content, UserId: userId, CrtDt: currentTime.String()}
+	email := emailContent;
+	emailIndex = append(emailIndex, email) //add email name to index list
+	fmt.Println("! email index: ", emailIndex)
+	jsonAsBytes, _ := json.Marshal(emailIndex)
+	err = stub.PutState(fileHash, jsonAsBytes) //store name of email
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("- end add email")
+	valAsbytes, err := stub.GetState(fileHash) //get the var from chaincode state
+	if err != nil {
+		jsonResp := "{\"Error\":\"Failed to get state for " + objIndexStr + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+
+	return valAsbytes, nil //send it onward
+}
+
 func (t *SimpleChaincode) addHashAttachment(stub shim.ChaincodeStubInterface, haId string, userId string, objId string) ([]byte, error) {
 	var err error
 
@@ -845,12 +881,38 @@ func (t *SimpleChaincode) addHashAttachment(stub shim.ChaincodeStubInterface, ha
 	return valAsbytes, nil //send it onward
 }
 
+func (t *SimpleChaincode) getEmailsListFromAttachment(stub shim.ChaincodeStubInterface, fileHash string) ([]byte, error) {
+	var err error
+
+	//get the email index
+	emailAsBytes, err := stub.GetState(fileHash)
+	if err != nil {
+		return nil, errors.New("Failed to get email index")
+	}
+	var emailIndex []string
+	//var obj Obj
+	found := false
+	json.Unmarshal(emailAsBytes, &emailIndex) //un stringify it aka JSON.parse()
+	/*for i := range emailIndex {
+		if objId == emailIndex[i].ObjId {
+			found = true
+			obj = emailIndex[i]
+			break
+		}
+	}*/
+	if found == false {
+		return nil, errors.New("No email matches")
+	}
+	jsonAsBytes, _ := json.Marshal(emailIndex);
+	return jsonAsBytes, nil
+}
+
 
 func (t *SimpleChaincode) verifyObject(stub shim.ChaincodeStubInterface, objId string) ([]byte, error) {
 	var err error
 
 	//get the email index
-	emailAsBytes, err := stub.GetState(objIndexStr)
+	emailAsBytes, err := stub.GetState(objId)
 	if err != nil {
 		return nil, errors.New("Failed to get email index")
 	}
@@ -858,13 +920,13 @@ func (t *SimpleChaincode) verifyObject(stub shim.ChaincodeStubInterface, objId s
 	var obj Obj
 	found := false
 	json.Unmarshal(emailAsBytes, &emailIndex) //un stringify it aka JSON.parse()
-	for i := range emailIndex {
+	/*for i := range emailIndex {
 		if objId == emailIndex[i].ObjId {
 			found = true
 			obj = emailIndex[i]
 			break
 		}
-	}
+	}*/
 	if found == false {
 		return nil, errors.New("No email matches")
 	}
