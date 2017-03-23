@@ -248,6 +248,8 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	// Handle different functions
 	if function == "read" { //read a variable
 		return t.read(stub, args)
+	}else if function == "getEmailsListFromAttachment" {
+		return t.getEmailsListFromAttachment(stub, args[0])
 	}
 	fmt.Println("query did not find func: " + function) //error
 
