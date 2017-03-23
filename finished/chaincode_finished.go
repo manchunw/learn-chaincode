@@ -893,7 +893,7 @@ func (t *SimpleChaincode) getEmailsListFromAttachment(stub shim.ChaincodeStubInt
 	}
 	var emailIndex []string
 	//var obj Obj
-	found := false
+	//found := false
 	json.Unmarshal(emailAsBytes, &emailIndex) //un stringify it aka JSON.parse()
 	/*for i := range emailIndex {
 		if objId == emailIndex[i].ObjId {
@@ -902,9 +902,7 @@ func (t *SimpleChaincode) getEmailsListFromAttachment(stub shim.ChaincodeStubInt
 			break
 		}
 	}*/
-	if found == false {
-		return nil, errors.New("No email matches")
-	}
+	
 	jsonAsBytes, _ := json.Marshal(emailIndex);
 	return jsonAsBytes, nil
 }
