@@ -920,7 +920,7 @@ func (t *SimpleChaincode) verifyObject(stub shim.ChaincodeStubInterface, objId s
 	}
 	var emailIndex []Obj
 	var obj Obj
-	found := false
+	//found := false
 	json.Unmarshal(emailAsBytes, &emailIndex) //un stringify it aka JSON.parse()
 	/*for i := range emailIndex {
 		if objId == emailIndex[i].ObjId {
@@ -929,9 +929,9 @@ func (t *SimpleChaincode) verifyObject(stub shim.ChaincodeStubInterface, objId s
 			break
 		}
 	}*/
-	if found == false {
-		return nil, errors.New("No email matches")
-	}
+	//if found == false {
+	//	return nil, errors.New("No email matches")
+	//}
 	jsonAsBytes, _ := json.Marshal(obj)
 	return jsonAsBytes, nil
 }
